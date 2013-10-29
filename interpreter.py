@@ -1,4 +1,5 @@
 from utils import change_function
+from parser.parserWrapper import uLispParser
 
 Symbol = str
 
@@ -54,31 +55,44 @@ global_env = add_globals(Environment())
 
 class SyntacticExpression(object):
     """
+    This a common interface to define syntatic expressions
+    """
+
+    def check_condition(self, expression, env=global_env):
+        raise NotImplementedError
+
+    def do_action(self, expression, env):
+        raise NotImplementedError
+
+
+class DynamicSyntacticExpression(SyntacticExpression):
+    """
     This a common interface to define syntatic expressions, that can be set on runtime
     """
 
     def __init__(self, condition, action):
+        super().__init__()
         change_function(self, 'check_condition', condition)
         change_function(self, 'do_action', action)
 
     def check_condition(self, expression, env=global_env):
-        raise NotImplemented
+        pass
 
     def do_action(self, expression, env):
-        raise NotImplemented
+        pass
 
 
 global_eval_conditions = [
     ('isinstance(expression, Symbol)', 'return env.find(expression)[expression]'),
     ('not isinstance(expression, list)', 'return expression'),
-    ('expression[0] == "quote"', '(_, exp) = expression\n\treturn exp'),
+    ('expression[0] == "quote"', '(_, exp) = expression\n    return exp'),
     ('expression[0] == "if"',
-     '(_, test, conseq, alt) = expression\n\treturn eval((conseq if eval(test, env) else alt), env)'),
-    ('expression[0] == "setq"', '(_, var, exp) = expression\n\tenv.find(var)[var] = eval(exp, env))'),
-    ('expression[0] == "defun"', '(_, var, exp) = expression\n\tenv[var] = eval(exp, env))'),
+     '(_, test, conseq, alt) = expression\n    return eval((conseq if eval(test, env) else alt), env)'),
+    ('expression[0] == "setq"', '(_, var, exp) = expression\n    env.find(var)[var] = eval(exp, env))'),
+    ('expression[0] == "defun"', '(_, var, exp) = expression\n    env[var] = eval(exp, env))'),
     ('expression[0] == "lambda"',
-     '(_, vars, exp) = expression\n\treturn lambda *args: eval(exp, Environment(vars, args, en'),
-    ('expression[0] == "begin"', 'for exp in expression[1:]:\n\t\tval = eval(exp, env)\n\treturn val')
+     '(_, vars, exp) = expression\n    return lambda *args: eval(exp, Environment(vars, args, en'),
+    ('expression[0] == "begin"', 'for exp in expression[1:]:\n        val = eval(exp, env)\n    return val')
 ]
 
 
@@ -91,7 +105,7 @@ class SyntacticEvaluator(object):
     def add_syntatic_expression(self, expression_tuple):
         self.expressions.append(SyntacticExpression(*expression_tuple))
 
-    def eval(self, expression, env=global_env):
+    def evaluate(self, expression, env=global_env):
         for expr in self.expressions:
             if expr.check_condition(expression, env):
                 return expr.do_action(expression, env)
@@ -100,63 +114,12 @@ class SyntacticEvaluator(object):
         proc = exps.pop(0)
         return proc(*exps)
 
-#old version delete after testing new one :P
-def evaluate(expression, env=global_env):
-    "Evaluate an expression in an environment."
-    if isinstance(expression, Symbol):             # variable reference
-        return env.find(expression)[expression]
-    elif not isinstance(expression, list):         # constant literal
-        return expression
-    elif expression[0] == 'quote':          # (quote exp)
-        (_, exp) = expression
-        return exp
-    elif expression[0] == 'if':             # (if test conseq alt)
-        (_, test, conseq, alt) = expression
-        return evaluate((conseq if evaluate(test, env) else alt), env)
-    elif expression[0] == 'setq':           # (set! var exp)
-        (_, var, exp) = expression
-        env.find(var)[var] = evaluate(exp, env)
-    elif expression[0] == 'defun':         # (define var exp)
-        (_, var, exp) = expression
-        env[var] = evaluate(exp, env)
-    elif expression[0] == 'lambda':         # (lambda (var*) exp)
-        (_, vars, exp) = expression
-        return lambda *args: evaluate(exp, Environment(vars, args, env))
-    elif expression[0] == 'begin':          # (begin exp*)
-        for exp in expression[1:]:
-            val = evaluate(exp, env)
-        return val
-    else:                          # (proc exp*)
-        exps = [evaluate(exp, env) for exp in expression]
-        proc = exps.pop(0)
-        return proc(*exps)
-
-
-class uLispParser(object):
-    def parse(self, string):
-        from uLispParser import uLisp_parse
-
-        return uLisp_parse.parseString(string).asList()[0]
-
-    def to_table(self, lisp_expression):
-        from texttable import Texttable
-
-        tab = Texttable()
-        for row in lisp_expression:
-            row = dict(row)
-            tab.header(row.keys())
-            tab.add_row(row.values())
-        print(tab.draw())
-
-    def to_string(self, lisp_expression):
-        return '(%s)' % ' '.join(self.to_string(y) for y in lisp_expression) if isinstance(lisp_expression,
-                                                                                           list) else lisp_expression
-
 
 class Interpreter(object):
     def __init__(self, environment=None):
         self.environment = environment or Environment()
         self.parser = uLispParser()
+        self.evaluator = SyntacticEvaluator()
 
     #Repl should admit not only a file type but also a IOBuffer or string
     def repl(self, prompt='lis.py> '):
@@ -167,9 +130,8 @@ class Interpreter(object):
             while True:
                 self.repl_sentence(input(prompt))
 
-
     def repl_sentence(self, sentence):
-        val = evaluate(self.parser.parse(sentence))
+        val = self.evaluator.evaluate(self.parser.parse(sentence))
         if val is not None:
             print(self.parser.to_string(val))
 

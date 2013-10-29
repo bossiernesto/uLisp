@@ -1,19 +1,20 @@
 import unittest
 from interpreter import *
 
+
 class TestULispInterpreter(unittest.TestCase):
     def setUp(self):
-        self.interpreter = None
-        global_env = add_globals(Environment())
+        self.evaluator = SyntacticEvaluator()
+        self.global_env = add_globals(Environment())
         self.parser = uLispParser()
 
     def test_boolean_expression(self):
-        self.assertEqual(False, evaluate(self.parser.parse("(equal 5 3)")))
+        self.assertEqual(False, self.evaluator.evaluate(self.parser.parse("(equal 5 3)")), self.global_env)
 
     def testLispResult(self):
         #mejorar el parser y el interprete para que se pueda bancar la definicion de un defun con parametros
-        self.assertEqual(50, evaluate(
-            self.parser.parse("(begin (defun add (lambda (num1 num2) (+ num1 num2))) (add 44 6))")))
+        self.assertEqual(50, self.evaluator.evaluate(
+            self.parser.parse("(begin (defun add (lambda (num1 num2) (+ num1 num2))) (add 44 6))")), self.global_env)
 
 
 class TestULispParser(unittest.TestCase):
@@ -29,22 +30,24 @@ class TestULispParser(unittest.TestCase):
         print(self.parser.parse(expression))
 
     def test_parse_new_parser(self):
-        expression="(begin (defun add (lambda (num1 num2) (+ num1 num2))) (add 44 6))"
+        expression = "(begin (defun add (lambda (num1 num2) (+ num1 num2))) (add 44 6))"
         print(self.parser.parse(expression))
 
 
 class TestSyntaticExpression(unittest.TestCase):
-
     def setUp(self):
-        pass
+        self.test_function_name = 'function_test'
 
     def function_test(self):
         pass
 
     def test_change_function(self):
-        from inspect import getsource
-        change_function(self,'function_test','return 42')
-        #self.assertEqual(42, self.function_test())
+        change_function(self, self.test_function_name, 'return 42')
+        self.assertEqual(42, self.function_test())
+
+    def test_change_multilinefunction(self):
+        change_function(self, self.test_function_name, 'var=1\n    return var+1')
+        self.assertEqual(2, self.function_test())
 
     def test_syntatic_condition_creation(self):
         pass

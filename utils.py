@@ -4,11 +4,17 @@ def get_method_name(string_method):
 
 def change_function(instance, signature, new_body):
     import inspect
+    from textwrap import dedent
 
-    new_code = inspect.getsource(getattr(instance, signature)).replace('pass', new_body)
-    method_name = get_method_name(new_code)
+    new_code = dedent(inspect.getsource(getattr(instance, signature))).replace("pass", new_body)
     method_dict = {}
+    print(new_code.strip())
     exec(new_code.strip(), globals(), method_dict)
-    setattr(instance, signature, method_dict[signature])
-    print(inspect.getsource(instance.__dict__[signature].__func__))
+    bind(method_dict[signature], instance, signature)
     return instance.__dict__[signature]
+
+import types
+
+
+def bind(f, obj, new_f_name):
+    obj.__dict__[new_f_name] = types.MethodType(f, obj)
