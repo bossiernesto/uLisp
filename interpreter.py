@@ -52,71 +52,9 @@ def add_globals(env):
 
 global_env = add_globals(Environment())
 
-
-class SyntacticExpression(object):
-    """
-    This a common interface to define syntatic expressions
-    """
-
-    def check_condition(self, expression, env=global_env):
-        raise NotImplementedError
-
-    def do_action(self, expression, env):
-        raise NotImplementedError
-
-
-class DynamicSyntacticExpression(SyntacticExpression):
-    """
-    This a common interface to define syntatic expressions, that can be set on runtime
-    """
-
-    def __init__(self, condition, action):
-        super().__init__()
-        change_function(self, 'check_condition', condition)
-        change_function(self, 'do_action', action)
-
-    def check_condition(self, expression, env=global_env):
-        pass
-
-    def do_action(self, expression, env):
-        pass
-
-
-global_eval_conditions = [
-    ('isinstance(expression, Symbol)', 'return env.find(expression)[expression]'),
-    ('not isinstance(expression, list)', 'return expression'),
-    ('expression[0] == "quote"', '(_, exp) = expression\n    return exp'),
-    ('expression[0] == "if"',
-     '(_, test, conseq, alt) = expression\n    return eval((conseq if eval(test, env) else alt), env)'),
-    ('expression[0] == "setq"', '(_, var, exp) = expression\n    env.find(var)[var] = eval(exp, env))'),
-    ('expression[0] == "defun"', '(_, var, exp) = expression\n    env[var] = eval(exp, env))'),
-    ('expression[0] == "lambda"',
-     '(_, vars, exp) = expression\n    return lambda *args: eval(exp, Environment(vars, args, en'),
-    ('expression[0] == "begin"', 'for exp in expression[1:]:\n        val = eval(exp, env)\n    return val')
-]
-
-
-class SyntacticEvaluator(object):
-    def __init__(self, initial_evaluator=global_eval_conditions):
-        self.expressions = []
-        for condition in global_eval_conditions:
-            self.add_syntatic_expression(condition)
-
-    def add_syntatic_expression(self, expression_tuple):
-        self.expressions.append(SyntacticExpression(*expression_tuple))
-
-    def evaluate(self, expression, env=global_env):
-        for expr in self.expressions:
-            if expr.check_condition(expression, env):
-                return expr.do_action(expression, env)
-                # (proc exp*)
-        exps = [self.eval(exp, env) for exp in expression]
-        proc = exps.pop(0)
-        return proc(*exps)
-
-
 class Interpreter(object):
     def __init__(self, environment=None):
+        from syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
         self.environment = environment or Environment()
         self.parser = uLispParser()
         self.evaluator = SyntacticEvaluator()

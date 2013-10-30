@@ -8,7 +8,6 @@ def change_function(instance, signature, new_body):
 
     new_code = dedent(inspect.getsource(getattr(instance, signature))).replace("pass", new_body)
     method_dict = {}
-    print(new_code.strip())
     exec(new_code.strip(), globals(), method_dict)
     bind(method_dict[signature], instance, signature)
     return instance.__dict__[signature]

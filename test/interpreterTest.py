@@ -1,5 +1,6 @@
 import unittest
 from interpreter import *
+from syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
 
 
 class TestULispInterpreter(unittest.TestCase):
