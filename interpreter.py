@@ -1,4 +1,3 @@
-from utils import change_function
 from parser.parserWrapper import uLispParser
 
 Symbol = str
