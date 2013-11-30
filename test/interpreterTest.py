@@ -32,6 +32,11 @@ class TestULispInterpreter(unittest.TestCase):
         parsed = self.parser.parse("(begin (1 2))")
         self.assertRaises(TypeError, self.evaluator.evaluate, parsed)
 
+    def test_(self):
+        #4 == (2 + 2)
+        parsed = self.parser.parse("(begin (equal 4 (+ 2 2)))")
+        self.assertEqual(True, self.evaluator.evaluate(parsed))
+
 
 class TestULispParser(unittest.TestCase):
     def setUp(self):
