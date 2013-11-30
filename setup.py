@@ -8,9 +8,9 @@ setup(name="uLisp",
     url="",
     license="GPL v3",
     py_modules=find_packages(exclude=('test')),
-    keywords="Memory Database",
+    keywords="Interpreter Lisp",
     classifiers=["Development Status :: 2 - Pre-Alpha",
                  "Environment :: Console",
-                 "Topic :: Database",
+                 "Topic :: Software Development :: Interpreters",
                  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)"]
 )
