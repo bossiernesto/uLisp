@@ -1,5 +1,6 @@
-from interpreter import global_env,Symbol,Environment
+from interpreter import global_env, Symbol, Environment
 from utils import change_function
+
 
 class SyntacticExpression(object):
     """
@@ -47,6 +48,15 @@ class ConstantLiteralExpression(SyntacticExpression):
 
     def do_action(self, expression, env):
         return expression
+
+
+class ConstantListExpression(SyntacticExpression):
+    def check_condition(self, expression, env=global_env):
+        return expression[0] == 'cons'
+
+    def do_action(self, expression, env):
+        print(expression)
+        return expression[1:]
 
 
 class QuoteExpression(SyntacticExpression):
@@ -105,7 +115,7 @@ class BeginExpression(SyntacticExpression):
 
 global_eval_expressions = [VariableReferenceExpression, ConstantLiteralExpression, QuoteExpression,
                            IfConditionExpression, SetVariableExpression, DefunExpression, LambdaExpression,
-                           BeginExpression]
+                           BeginExpression, ConstantListExpression]
 
 
 class SyntacticEvaluator(object):

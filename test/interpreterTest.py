@@ -1,7 +1,8 @@
 import unittest
+from unittest import skip
 from interpreter import *
 from syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
-
+import  pprint
 
 class TestULispInterpreter(unittest.TestCase):
     def setUp(self):
@@ -13,9 +14,19 @@ class TestULispInterpreter(unittest.TestCase):
         self.assertEqual(False, self.evaluator.evaluate(self.parser.parse("(equal 5 3)")), self.global_env)
 
     def test_lisp_result(self):
-        #mejorar el parser y el interprete para que se pueda bancar la definicion de un defun con parametros
+        #mejorar el parser y el interprete para que se pueda bancar la definicion de un defun con parametros sin tener llamarlo por un lambda
         self.assertEqual(50, self.evaluator.evaluate(
-            self.parser.parse("(begin (defun add (lambda (num1 num2) (+ num1 num2))) (add 44 6))")), self.global_env)
+            self.parser.parse("(begin (defun foo (lambda (num1 num2) (+ num1 num2))) (foo 44 6))")), self.global_env)
+
+    def test_interpret_fst(self):
+        parsed=self.parser.parse(('(begin '
+                                  '(defun car'
+                                  '(lambda (x y) (x))'
+                                  ')'
+                                  '(car 3 4)'
+                                  ')'))
+        pprint.pprint(parsed)
+        self.assertEqual(3,self.evaluator.evaluate(parsed))
 
     def test_simple_interpretation(self):
         self.assertEqual(1, self.evaluator.evaluate(self.parser.parse("(begin 1)")))
@@ -48,5 +59,3 @@ class TestULispParser(unittest.TestCase):
         self.assertEqual(['begin', ['+', 2, 4]], parsed_expression)
         self.assertEqual(2, len(parsed_expression))
         self.assertEqual(3, len(parsed_expression[1]))
-
-
