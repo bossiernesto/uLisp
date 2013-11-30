@@ -128,3 +128,4 @@ class SyntacticEvaluator(object):
         exps = [self.evaluate(exp, env) for exp in expression]
         proc = exps.pop(0)
         return proc(*exps)
+

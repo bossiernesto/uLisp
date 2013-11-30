@@ -128,25 +128,3 @@ test07 = """(defun factorial (x)
 test51 = """(2:XX "abc" (#30# |YWJj|))"""
 test51error = """(3:XX "abc" (#30# |YWJj|))"""
 
-test52 = """
-    (and
-      (or (> uid 1000)
-          (!= gid 20)
-      )
-      (> quota 5.0e+03)
-    )
-    """
-
-# Run tests
-# t = None
-# alltests = [locals()[t] for t in sorted(locals()) if t.startswith("test")]
-#
-# for t in alltests:
-#     print('-' * 50)
-#     print(t)
-#     try:
-#         sexpr = sexp.parseString(t, parseAll=True)
-#         pprint.pprint(sexpr.asList())
-#     except ParseFatalException as pfe:
-#         print("Error:", pfe.msg)
-#         print(pfe.markInputline('^'))
