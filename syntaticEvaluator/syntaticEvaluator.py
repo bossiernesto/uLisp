@@ -125,6 +125,8 @@ class SyntacticEvaluator(object):
             if expr.check_condition(expression, env):
                 return expr.do_action(expression, env)
                 # (proc exp*)
+        #reify this default action as an another Syntatic Expression class
         exps = [self.evaluate(exp, env) for exp in expression]
         proc = exps.pop(0)
         return proc(*exps)
+
