@@ -1,5 +1,5 @@
 from unittest import TestCase
-from parser.uLispParser import uLisp_parse
+from uLisp.parser.uLispParser import uLisp_parse
 
 simple_expression = """
     (and

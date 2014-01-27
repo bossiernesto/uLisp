@@ -1,6 +1,8 @@
 import unittest
-from parser.uLispParser import uLisp_parse,ParseFatalException
 import pprint
+
+from uLisp.parser.uLispParser import uLisp_parse
+
 
 simple_expression = """
     (and
