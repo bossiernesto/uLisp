@@ -2,7 +2,6 @@ import unittest
 from unittest import skip
 from interpreter import *
 from syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
-import  pprint
 
 class TestULispInterpreter(unittest.TestCase):
     def setUp(self):
@@ -13,19 +12,19 @@ class TestULispInterpreter(unittest.TestCase):
     def test_boolean_expression(self):
         self.assertEqual(False, self.evaluator.evaluate(self.parser.parse("(equal 5 3)")), self.global_env)
 
+    @skip
     def test_lisp_result(self):
         #mejorar el parser y el interprete para que se pueda bancar la definicion de un defun con parametros sin tener llamarlo por un lambda
-        self.assertEqual(50, self.evaluator.evaluate(
-            self.parser.parse("(begin (defun foo (lambda (num1 num2) (+ num1 num2))) (foo 44 6))")), self.global_env)
+        parsed = self.parser.parse("(begin "
+                              "(foo 44 6)"
+                              "(defun foo (lambda (num1 num2) (+ num1 num2)))"
+                              ")")
+        self.assertEqual(50, self.evaluator.evaluate(parsed), self.global_env)
 
     def test_interpret_fst(self):
         parsed=self.parser.parse(('(begin '
-                                  '(defun car'
-                                  '(lambda (x y) (x))'
-                                  ')'
-                                  '(car 3 4)'
+                                  '(car (list 3 2))'
                                   ')'))
-        pprint.pprint(parsed)
         self.assertEqual(3,self.evaluator.evaluate(parsed))
 
     def test_simple_interpretation(self):
@@ -47,15 +46,3 @@ class TestULispInterpreter(unittest.TestCase):
         #4 == (2 + 2)
         parsed = self.parser.parse("(begin (equal 4 (+ 2 2)))")
         self.assertEqual(True, self.evaluator.evaluate(parsed))
-
-
-class TestULispParser(unittest.TestCase):
-    def setUp(self):
-        self.parser = uLispParser()
-
-    def test_parse_simple_expression(self):
-        expression = '(begin (+ 2 4))'
-        parsed_expression = self.parser.parse(expression)
-        self.assertEqual(['begin', ['+', 2, 4]], parsed_expression)
-        self.assertEqual(2, len(parsed_expression))
-        self.assertEqual(3, len(parsed_expression[1]))

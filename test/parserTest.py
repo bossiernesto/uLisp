@@ -36,7 +36,7 @@ class ParserTest(TestCase):
         parsed = self.parser.parseString(simple_lambda, parseAll=True)
         self.assertEqual(3, len(parsed[0]))
         self.assertEqual('lambda', parsed[0][0])
-        self.assertEqual((['*', 'x', 'x'], {}), parsed[0][2])
+        self.assertEqual(['*', 'x', 'x'], list(parsed[0][2]))
 
     def test_complex_lambda(self):
         parsed = self.parser.parseString(complex_lambda, parseAll=True)

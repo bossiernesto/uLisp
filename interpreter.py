@@ -39,8 +39,8 @@ def add_globals(env):
          'eq': op.is_,
          'length': len,
          'cons': lambda x, y: [x] + y,
-         'car': lambda x: x[0],
-         'cdr': lambda x: x[1:],
+         'car': lambda x: x[0], #head
+         'cdr': lambda x: x[1:], #tail
          'append': op.add,
          'list': lambda *x: list(x),
          'list?': lambda x: isinstance(x, list),
@@ -59,7 +59,7 @@ class Interpreter(object):
         self.evaluator = SyntacticEvaluator()
 
     #Repl should admit not only a file type but also a IOBuffer or string
-    def repl(self, prompt='lis.py> '):
+    def repl(self, prompt='lis.py>'):
         "A prompt-read-eval-print loop."
         if isinstance(prompt, str):
             self.repl_sentence(prompt)
