@@ -1,5 +1,7 @@
 #uLisp
 
+[![Build Status](https://travis-ci.org/bossiernesto/uLisp.svg?branch=master)](https://travis-ci.org/bossiernesto/uLisp)
+
 A small Scheme Interpreter done in Python
 
 ##Objectives
