@@ -1,4 +1,4 @@
-from parser.parserWrapper import uLispParser
+from uLisp.parser.parserWrapper import uLispParser
 
 Symbol = str
 
@@ -53,7 +53,7 @@ global_env = add_globals(Environment())
 
 class Interpreter(object):
     def __init__(self, environment=None):
-        from syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
+        from uLisp.syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
         self.environment = environment or Environment()
         self.parser = uLispParser()
         self.evaluator = SyntacticEvaluator()

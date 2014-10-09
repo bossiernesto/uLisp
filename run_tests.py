@@ -2,7 +2,7 @@ import unittest
 import glob
 import sys
 
-test_file_strings = glob.glob('test/*/test_*.py')
+test_file_strings = glob.glob('test/test_*.py')
 module_strings = [str[0:len(str) - 3] for str in test_file_strings]
 modules_paths = [str.replace('/', '.') for str in module_strings]
 modules = [__import__(str) for str in modules_paths]

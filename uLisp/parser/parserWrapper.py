@@ -1,7 +1,7 @@
 class uLispParser(object):
 
     def parse(self, string):
-        from parser.uLispParser import uLisp_parse
+        from uLisp.parser.uLispParser import uLisp_parse
         return uLisp_parse.parseString(string).asList()[0]
 
     def to_table(self, lisp_expression):

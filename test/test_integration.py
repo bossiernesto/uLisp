@@ -1,7 +1,6 @@
 from unittest import TestCase,skip
-from interpreter import *
-from syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
-from pprint import pprint
+from uLisp.interpreter import *
+from uLisp.syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
 
 class TestLispInterpreter(TestCase):
 

@@ -1,7 +1,7 @@
 import unittest
 from unittest import skip
-from interpreter import *
-from syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
+from uLisp.interpreter import *
+from uLisp.syntaticEvaluator.syntaticEvaluator import SyntacticEvaluator
 
 class TestULispInterpreter(unittest.TestCase):
     def setUp(self):

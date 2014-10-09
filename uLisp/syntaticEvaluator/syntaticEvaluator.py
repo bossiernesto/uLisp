@@ -1,5 +1,5 @@
-from interpreter import global_env, Symbol, Environment
-from utils import change_function
+from uLisp.interpreter import global_env,Symbol,Environment
+from uLisp.utils.utils import change_function
 
 
 class SyntacticExpression(object):
@@ -135,6 +135,7 @@ class SyntacticEvaluator(object):
             if expr.check_condition(expression, env):
                 return expr.do_action(expression, env)
                 # (proc exp*)
+        #TODO: reify this default action as an another Syntatic Expression class
         exps = [self.evaluate(exp, env) for exp in expression]
         proc = exps.pop(0)
         return proc(*exps)
